@@ -25,16 +25,18 @@ public final class R {
     }
     public static final class id {
         public static final int button=0x7f080001;
-        public static final int connection_state=0x7f080002;
-        public static final int data_value=0x7f080003;
+        public static final int connection_state=0x7f080004;
+        public static final int data_value=0x7f080005;
         public static final int device_address=0x7f080000;
-        public static final int device_name=0x7f080005;
-        public static final int gatt_services_list=0x7f080004;
-        public static final int menu_connect=0x7f080007;
-        public static final int menu_disconnect=0x7f080008;
-        public static final int menu_refresh=0x7f080006;
-        public static final int menu_scan=0x7f080009;
-        public static final int menu_stop=0x7f08000a;
+        public static final int device_name=0x7f080007;
+        public static final int gatt_services_list=0x7f080006;
+        public static final int menu_connect=0x7f080009;
+        public static final int menu_disconnect=0x7f08000a;
+        public static final int menu_refresh=0x7f080008;
+        public static final int menu_scan=0x7f08000b;
+        public static final int menu_stop=0x7f08000c;
+        public static final int pwmSlider=0x7f080002;
+        public static final int pwmVal=0x7f080003;
     }
     public static final class layout {
         public static final int actionbar_indeterminate_progress=0x7f030000;

@@ -41,6 +41,18 @@
         android:onClick="blinkButton"
         android:text="Blink!" />
 
+    <SeekBar
+        android:id="@+id/pwmSlider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:max="255" />
+
+    <TextView
+        android:id="@+id/pwmVal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
     <LinearLayout android:orientation="horizontal"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"

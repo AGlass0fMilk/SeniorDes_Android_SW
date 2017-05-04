@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.SeekBar;
 import android.widget.SimpleExpandableListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -145,6 +146,10 @@ public class DeviceControlActivity extends Activity {
         mDataField.setText(R.string.no_data);
     }
 
+    SeekBar pwmSlider; //= (SeekBar) findViewById(R.id.pwmSlider);
+    TextView pwmVal;
+    char pwmData;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -165,6 +170,32 @@ public class DeviceControlActivity extends Activity {
         getActionBar().setDisplayHomeAsUpEnabled(true);
         Intent gattServiceIntent = new Intent(this, BluetoothLeService.class);
         bindService(gattServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
+        pwmVal = (TextView) findViewById(R.id.pwmVal);
+
+        pwmSlider = (SeekBar) findViewById(R.id.pwmSlider);
+        pwmSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int progress = 0;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
+                progress = progressValue;
+                pwmVal.setText("Covered: " + progress + "/" + seekBar.getMax());
+                pwmData = (char) progress;
+                changePWM();
+                //Toast.makeText(getApplicationContext(), "Changing seekbar's progress", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //Toast.makeText(getApplicationContext(), "Started tracking seekbar", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //Toast.makeText(getApplicationContext(), "Stopped tracking seekbar", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -238,6 +269,7 @@ public class DeviceControlActivity extends Activity {
     // In this sample, we populate the data structure that is bound to the ExpandableListView
     // on the UI.
     BluetoothGattCharacteristic ledCharacteristic;
+    BluetoothGattCharacteristic dataCharacteristic;
     private void displayGattServices(List<BluetoothGattService> gattServices) {
         if (gattServices == null) return;
         String uuid = null;
@@ -274,6 +306,9 @@ public class DeviceControlActivity extends Activity {
                 if(uuid.equalsIgnoreCase("f0001111-0451-4000-b000-000000000000")) {
                     Log.d("UUID", "Found LED UUID!");
                     ledCharacteristic = gattCharacteristic;
+                }
+                if(uuid.equalsIgnoreCase("f0001131-0451-4000-B000-000000000000")) {
+                    dataCharacteristic = gattCharacteristic;
                 }
                 gattCharacteristicGroupData.add(currentCharaData);
                 //byte[] val = new byte[1];
@@ -314,12 +349,20 @@ public class DeviceControlActivity extends Activity {
         byte[] value = new byte[1];
         value[0] = (byte) toggle;
         //BluetoothLeService.
-        Log.d("BLINK", "Blinked LED!");
-        Log.d("BLINK", "Writing: " + String.valueOf(value[0]));
+        //Log.d("BLINK", "Blinked LED!");
+        //Log.d("BLINK", "Writing: " + String.valueOf(value[0]));
         boolean result = ledCharacteristic.setValue(value);
         mBluetoothLeService.writeCharacteristic(ledCharacteristic);
-        toggle = 1 - toggle;
-        Log.d("BLINK", "Next Value: " + String.valueOf(toggle));
-        Log.d("BLINK", "Write Result: " + String.valueOf(result));
+        //toggle = 1 - toggle;
+        //Log.d("BLINK", "Next Value: " + String.valueOf(toggle));
+        //Log.d("BLINK", "Write Result: " + String.valueOf(result));
+    }
+
+    public void changePWM() {
+        byte[] value = new byte[1];
+        value[0] = (byte) pwmData;
+
+        boolean result = dataCharacteristic.setValue(value);
+        mBluetoothLeService.writeCharacteristic(dataCharacteristic);
     }
 }
